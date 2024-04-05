@@ -37,17 +37,17 @@
         <tr>
             <th>登録日
             <th>「買うもの」名
-@foreach ($list as $shoppinglist)
+@foreach ($list as $shopping_list)
         <tr>
-            <td>{{ $shoppinglist->created_at }}
-            <td>{{ $shoppinglist->name }}
+            <td>{{ $shopping_list->created_at }}
+            <td>{{ $shopping_list->name }}
             <td>
-                 <form action="{{ route('complete', ['shopping_list_id' => $shoppinglist->id]) }}" method="post">
+                 <form action="{{ route('complete', ['shopping_list_id' => $shopping_list->id]) }}" method="post">
                  @csrf
                  <button onclick='return confirm("この「買うもの」を「完了」にします。よろしいですか？");' >完了</button></form>
             <td>  
             <td>
-                <form action="{{ route('delete', ['shopping_list_id' => $shoppinglist->id]) }}" method="post">
+                <form action="{{ route('delete', ['shopping_list_id' => $shopping_list->id]) }}" method="post">
                 @csrf
                 @method("DELETE")
                 <button onclick='return confirm("この「買うもの」を「削除」します。よろしいですか？");'>削除</button></form>

@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ShoppingListRegisterPostRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ShoppingList as ShoppingListModel;
-//use Illuminate\Http\Request;
-//use Illuminate\Support\Facades\DB;
-//use App\Models\CompletedShoppingList as CompletedShoppingListModel;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\CompletedShoppingList as CompletedShoppingListModel;
 
 class ShoppingListController extends Controller
 {
@@ -59,16 +59,34 @@ class ShoppingListController extends Controller
         return redirect('/shopping_list/list');
     }
     
+        /**
+     * 「単一の「買うもの」」Modelの取得
+     */
+    protected function getShoppingListModel($shopping_list_id)
+    {
+        // shopping_list_idのレコードを取得する
+        $shopping_list = ShoppingListModel::find($shopping_list_id);
+        if ($shopping_list === null) {
+            return null;
+        }
+        // 本人以外のタスクならNGとする
+        if ($shopping_list->user_id !== Auth::id()) {
+            return null;
+        }
+        //
+        return $shopping_list;
+    }
+    
     /**
      * 削除処理
      */
-/*     public function delete(Request $request, $shopping_list_id)
+     public function delete(Request $request, $shopping_list_id)
      {
          // shopping_list_idのレコードを取得する
-//         $shopping_list = $this->getShoppingListModel($shopping_list_id);
-            $shopping_list = $this->getListBuilder()
-                ->where('id', $shopping_list_id)
-                ->first();
+         $shopping_list = $this->getShoppingListModel($shopping_list_id);
+//            $shopping_list = $this->getListBuilder()
+//                ->where('id', $shopping_list_id)
+//                ->first();
 
          // 「買うもの」を削除する
          if ($shopping_list !== null) {
@@ -79,11 +97,11 @@ class ShoppingListController extends Controller
          // 一覧に遷移する
          return redirect('/shopping_list/list');
      }
-*/
+
     /**
      * 買い物の完了
      */
-/*    public function complete(Request $request, $shopping_list_id)
+    public function complete(Request $request, $shopping_list_id)
     {
         // 「買うもの」を完了テーブルに移動させる
         try {
@@ -97,14 +115,14 @@ class ShoppingListController extends Controller
                 throw new \Exception('');
             }
 
-            // tasks側を削除する
+            // shopping_lists側を削除する
             $shopping_list->delete();
 // var_dump($shopping_list->toArray()); exit;
 
             // completed_shopping_lists側にinsertする
             $dask_datum = $shopping_list->toArray();
             unset($dask_datum['created_at']);
-//            unset($dask_datum['updated_at']);
+            unset($dask_datum['updated_at']);
             $r = CompletedShoppingListModel::create($dask_datum);
             if ($r === null) {
                 // insertで失敗したのでトランザクション終了
@@ -125,7 +143,7 @@ class ShoppingListController extends Controller
         // 一覧に遷移する
         return redirect('/shopping_list/list');
     }
-*/
+
      /**
       * 一覧用の Illuminate\Databade\Eloquent\Builder インスタンスの取得
       */
